@@ -1,7 +1,12 @@
 package ru.clevertec;
 
+import ru.clevertec.entity.Client;
+import ru.clevertec.entity.Server;
+
 public class Main {
     public static void main(String[] args) {
-        System.out.println("Hello world!");
+        Server server = new Server();
+        Client client = new Client(100, server);
+        client.sendRequest();
     }
 }
