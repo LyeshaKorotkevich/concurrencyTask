@@ -13,10 +13,12 @@ public class Server {
     @Getter
     private final List<Integer> resultList;
     private final Lock lock;
+    private final Random random;
 
     public Server() {
         this.lock = new ReentrantLock();
         this.resultList = new ArrayList<>();
+        this.random = new Random();
     }
 
     public Response processRequest(Request request) {
@@ -24,17 +26,16 @@ public class Server {
 
         try {
             lock.lock();
-            resultList.add(request.getData());
+            resultList.add(request.data());
         } finally {
             lock.unlock();
         }
 
-        System.out.println("Server: Added " + request.getData() + ". List size: " + resultList.size());
+        System.out.println("Server: Added " + request.data() + ". List size: " + resultList.size());
         return new Response(resultList.size());
     }
 
     private void delay() {
-        Random random = new Random();
         try {
             Thread.sleep(random.nextInt(901) + 100);
         } catch (InterruptedException e) {

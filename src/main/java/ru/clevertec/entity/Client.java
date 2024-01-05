@@ -21,11 +21,13 @@ public class Client {
     @Getter
     private final AtomicInteger accumulator;
     private final ExecutorService executor;
+    private final Random random;
 
     public Client(int size, Server server) {
         this.server = server;
         this.accumulator = new AtomicInteger();
         this.executor = Executors.newFixedThreadPool(Constants.THREAD_COUNT);
+        this.random = new Random();
         data = new ArrayList<>(size);
 
         for (int i = 1; i <= size; i++) {
@@ -34,7 +36,6 @@ public class Client {
     }
 
     public void sendRequest() {
-        Random random = new Random();
         while (!data.isEmpty()) {
             int randomIndex = random.nextInt(data.size());
             int value = data.remove(randomIndex);
@@ -46,7 +47,7 @@ public class Client {
                     executor
             );
 
-            responseFuture.thenAccept(response -> accumulator.addAndGet(response.getSize()));
+            responseFuture.thenAccept(response -> accumulator.addAndGet(response.size()));
 
             delay();
         }
@@ -58,7 +59,6 @@ public class Client {
     }
 
     private void delay() {
-        Random random = new Random();
         try {
             Thread.sleep(random.nextInt(401) + 100);
         } catch (InterruptedException e) {
